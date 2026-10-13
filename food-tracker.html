@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Daily Plate</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f3f6ef;--card:#fff;--ink:#23301f;--mute:#6b7a66;--line:#dfe6d8;--green:#4f7a3a;--over:#c0492f;--soft:#e4eed9;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141a12;--card:#1e271b;--ink:#e8efe3;--mute:#9aa895;--line:#2f3b2b;--green:#8fc26e;--over:#e87b5f;--soft:#27331f}}
+:root[data-theme="dark"]{--bg:#141a12;--card:#1e271b;--ink:#e8efe3;--mute:#9aa895;--line:#2f3b2b;--green:#8fc26e;--over:#e87b5f;--soft:#27331f}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Nunito,system-ui,sans-serif;line-height:1.5}
+main{max-width:520px;margin:0 auto;padding:18px 16px 48px}
+h1,h2{font-family:Fraunces,Georgia,serif;margin:0}
+h1{font-size:26px}h2{font-size:18px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.date{display:flex;align-items:center;gap:6px}
+button,input,select{font:inherit;color:inherit}
+.icon{background:var(--card);border:1px solid var(--line);border-radius:10px;width:36px;height:36px;cursor:pointer}
+input[type=date]{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:6px 8px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:14px}
+.ring{display:flex;align-items:center;gap:18px}
+.ring svg{flex:none}
+.big{font-family:Fraunces,serif;font-size:34px;line-height:1}
+.mute{color:var(--mute);font-size:14px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px;text-align:center}
+.stats div{background:var(--soft);border-radius:12px;padding:8px 4px}
+.stats b{display:block;font-size:17px}
+form{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+form input,form select{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px;width:100%}
+form .full{grid-column:1/-1}
+.add{grid-column:1/-1;background:var(--green);color:#fff;border:0;border-radius:10px;padding:11px;font-weight:700;cursor:pointer}
+:root[data-theme="dark"] .add{color:#12200c}
+.meal{margin-top:14px}
+.meal-h{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--line);padding-bottom:4px}
+.item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px dashed var(--line)}
+.item small{color:var(--mute)}
+.del{background:none;border:0;color:var(--mute);font-size:18px;cursor:pointer;padding:4px 8px}
+.empty{color:var(--mute);font-size:14px;padding:8px 0}
+.wrow{display:flex;gap:8px}
+.wrow input{flex:1;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px}
+.wrow button{background:var(--green);color:#fff;border:0;border-radius:10px;padding:0 16px;font-weight:700;cursor:pointer}
+:root[data-theme="dark"] .wrow button{color:#12200c}
+.week{display:flex;align-items:flex-end;gap:6px;height:90px;margin-top:10px}
+.bar{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;font-size:11px;color:var(--mute)}
+.bar i{display:block;width:100%;border-radius:6px 6px 0 0;background:var(--green);min-height:2px}
+.bar i.o{background:var(--over)}
+:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+</style>
+</head>
+<body>
+<main>
+  <div class="top">
+    <h1>Daily Plate</h1>
+    <div class="date">
+      <button class="icon" id="prev" aria-label="Previous day">‹</button>
+      <input type="date" id="date" aria-label="Date">
+      <button class="icon" id="next" aria-label="Next day">›</button>
+    </div>
+  </div>
+
+  <section class="card">
+    <div class="ring">
+      <svg width="130" height="130" viewBox="0 0 130 130" aria-hidden="true">
+        <circle cx="65" cy="65" r="54" fill="none" stroke="var(--soft)" stroke-width="14"/>
+        <circle id="arc" cx="65" cy="65" r="54" fill="none" stroke="var(--green)" stroke-width="14" stroke-linecap="round" stroke-dasharray="339.3" stroke-dashoffset="339.3" transform="rotate(-90 65 65)" style="transition:stroke-dashoffset .4s"/>
+      </svg>
+      <div>
+        <div class="big" id="left">1500</div>
+        <div class="mute" id="leftLabel">kcal left today</div>
+      </div>
+    </div>
+    <div class="stats">
+      <div><b id="goal">1500</b><span class="mute">Goal</span></div>
+      <div><b id="eaten">0</b><span class="mute">Eaten</span></div>
+      <div><b id="prot">0 g</b><span class="mute">Protein</span></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Add food</h2>
+    <form id="f" style="margin-top:10px">
+      <input class="full" id="name" placeholder="What did she eat?" required maxlength="60">
+      <input id="cal" type="number" min="0" max="5000" inputmode="numeric" placeholder="Calories" required>
+      <input id="pro" type="number" min="0" max="300" inputmode="decimal" placeholder="Protein g (optional)">
+      <select id="meal" class="full">
+        <option>Breakfast</option><option>Lunch</option><option>Dinner</option><option>Snacks</option>
+      </select>
+      <button class="add" type="submit">Add to log</button>
+    </form>
+  </section>
+
+  <div id="meals"></div>
+
+  <section class="card">
+    <h2>Last 7 days</h2>
+    <div class="week" id="week"></div>
+  </section>
+
+  <section class="card">
+    <h2>Weight</h2>
+    <p class="mute" style="margin:4px 0 10px">Today: <b id="wnow">69.5</b> kg · change since start: <b id="wdiff">0</b> kg</p>
+    <div class="wrow">
+      <input id="w" type="number" step="0.1" min="20" max="300" inputmode="decimal" placeholder="Log weight (kg)">
+      <button id="wsave">Save</button>
+    </div>
+  </section>
+</main>
+
+<script>
+const GOAL=1500, START_W=69.5, MEALS=["Breakfast","Lunch","Dinner","Snacks"];
+let store={days:{},weights:{}};
+try{const s=localStorage.getItem("dailyPlate");if(s)store=JSON.parse(s)}catch(e){}
+const save=()=>{try{localStorage.setItem("dailyPlate",JSON.stringify(store))}catch(e){}};
+const $=id=>document.getElementById(id);
+const iso=d=>{const z=new Date(d.getTime()-d.getTimezoneOffset()*6e4);return z.toISOString().slice(0,10)};
+let cur=iso(new Date());
+const day=k=>store.days[k]||(store.days[k]=[]);
+const total=k=>(store.days[k]||[]).reduce((a,b)=>a+b.cal,0);
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function render(){
+  $("date").value=cur;
+  const items=day(cur), eaten=total(cur), left=GOAL-eaten;
+  const prot=items.reduce((a,b)=>a+(b.pro||0),0);
+  $("goal").textContent=GOAL;$("eaten").textContent=eaten;$("prot").textContent=Math.round(prot)+" g";
+  $("left").textContent=Math.abs(left);
+  $("leftLabel").textContent=left>=0?"kcal left":"kcal over goal";
+  const arc=$("arc");
+  arc.style.strokeDashoffset=339.3*(1-Math.min(eaten/GOAL,1));
+  arc.style.stroke=left<0?"var(--over)":"var(--green)";
+  $("meals").innerHTML=MEALS.map(m=>{
+    const list=items.map((x,i)=>({...x,i})).filter(x=>x.meal===m);
+    const sum=list.reduce((a,b)=>a+b.cal,0);
+    return `<section class="card meal" style="margin-top:14px"><div class="meal-h"><h2>${m}</h2><span class="mute">${sum} kcal</span></div>`+
+      (list.length?list.map(x=>`<div class="item"><div>${esc(x.name)}<br><small>${x.cal} kcal${x.pro?` · ${x.pro} g protein`:""}</small></div><button class="del" data-i="${x.i}" aria-label="Remove ${esc(x.name)}">✕</button></div>`).join(""):`<div class="empty">Nothing logged yet.</div>`)+`</section>`;
+  }).join("");
+  // week
+  const wk=[];for(let i=6;i>=0;i--){const d=new Date(cur+"T12:00:00");d.setDate(d.getDate()-i);wk.push(d)}
+  const max=Math.max(GOAL,...wk.map(d=>total(iso(d))));
+  $("week").innerHTML=wk.map(d=>{const k=iso(d),t=total(k);
+    return `<div class="bar"><span>${t||""}</span><i class="${t>GOAL?"o":""}" style="height:${t/max*100}%"></i><span>${d.toLocaleDateString(undefined,{weekday:"narrow"})}</span></div>`}).join("");
+  // weight
+  const ks=Object.keys(store.weights).sort();
+  const latest=ks.length?store.weights[ks[ks.length-1]]:START_W;
+  $("wnow").textContent=latest.toFixed(1);
+  const diff=latest-START_W;$("wdiff").textContent=(diff>0?"+":"")+diff.toFixed(1);
+}
+$("f").addEventListener("submit",e=>{
+  e.preventDefault();
+  day(cur).push({name:$("name").value.trim(),cal:Math.round(+$("cal").value),pro:+$("pro").value||0,meal:$("meal").value});
+  save();$("name").value=$("cal").value=$("pro").value="";$("name").focus();render();
+});
+$("meals").addEventListener("click",e=>{
+  const b=e.target.closest(".del");if(!b)return;
+  day(cur).splice(+b.dataset.i,1);save();render();
+});
+const shift=n=>{const d=new Date(cur+"T12:00:00");d.setDate(d.getDate()+n);cur=iso(d);render()};
+$("prev").onclick=()=>shift(-1);$("next").onclick=()=>shift(1);
+$("date").onchange=e=>{if(e.target.value){cur=e.target.value;render()}};
+$("wsave").onclick=()=>{const v=parseFloat($("w").value);if(!v)return;store.weights[iso(new Date())]=v;save();$("w").value="";render()};
+render();
+</script>
+</body>
+</html>
